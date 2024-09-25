@@ -101,4 +101,26 @@ public class TopTrendingController : AdminController
         await _dbContext.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if(id == null) return NotFound();
+        var topTrending= await _dbContext.TopTrendings.FindAsync(id);
+        if(topTrending == null) return NotFound();
+        return View(topTrending);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(TopTrending topTrending)
+    {
+        var existingTt = await _dbContext.TopTrendings.FindAsync(topTrending.Id);
+
+        if (existingTt == null) return NotFound();
+        var path = Path.Combine(Constants.TopTrendingImagePath, existingTt.ImgUrl);
+        if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+        _dbContext.TopTrendings.Remove(existingTt);
+
+        await _dbContext.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
 }

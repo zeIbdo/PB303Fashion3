@@ -30,7 +30,7 @@
                             <a asp-controller="toptrending" asp-action="update" asp-route-id="@item.Id" class="btn btn-primary">Update </a>
                         </td>
                         <td>
-                            <a class="btn btn-primary">Delete</a>
+                            <a asp-controller="toptrending" asp-action="delete" asp-route-id="@item.Id" class="btn btn-primary">Delete</a>
                         </td>
                             </tr>
                         }
