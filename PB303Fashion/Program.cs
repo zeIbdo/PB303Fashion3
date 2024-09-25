@@ -39,7 +39,7 @@ namespace PB303Fashion
             {
                 endpoints.MapControllerRoute(
                     name: "areas",
-                    pattern: "{area:exists}/{controller=Category}/{action=Index}/{id?}");
+                    pattern: "{area:exists}/{controller=TopTrending}/{action=Index}/{id?}");
 
                 app.MapControllerRoute(
                     name: "default",
