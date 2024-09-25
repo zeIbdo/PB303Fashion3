@@ -21,7 +21,49 @@ public class TopTrendingController : AdminController
         var topTrendings = await _dbContext.TopTrendings.ToListAsync();
         return View(topTrendings);
     }
+    public async Task<IActionResult> Update(int? id)
+    {
+        if(id== null)return NotFound();
+        var topTrending=await _dbContext.TopTrendings.FindAsync(id);
+        if(topTrending == null) return NotFound();
+        return View(topTrending);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Update(TopTrending topTrending)
+    {
+        var existingTt=await _dbContext.TopTrendings.FindAsync(topTrending.Id);
+        if(existingTt == null) return NotFound();
+        if(!ModelState.IsValid)return View(existingTt);
+        if (topTrending.ImageFile != null)
+        {
+            if (!topTrending.ImageFile.IsImage())
+            {
+                ModelState.AddModelError("ImageFile", "Sekil secmelisiz");
 
+                return View();
+            }
+
+            if (!topTrending.ImageFile.IsAllowedSize(1))
+            {
+                ModelState.AddModelError("ImageFile", "Sekil olcusu max 1mb olmalidir");
+
+                return View();
+            }
+            var path = Path.Combine(Constants.TopTrendingImagePath,existingTt.ImgUrl);
+            if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
+            var newUrl= await topTrending.ImageFile.GenerateFileAsync(Constants.TopTrendingImagePath);
+            existingTt.ImgUrl = newUrl;
+        }
+        existingTt.Description = topTrending.Description;
+        existingTt.Content = topTrending.Content;
+        existingTt.SubText = topTrending.SubText;
+            _dbContext.TopTrendings.Update(existingTt);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+
+    }
     public IActionResult Create()
     {
         return View();
