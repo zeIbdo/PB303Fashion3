@@ -11,22 +11,17 @@
                 <form class="forms-sample" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label>SubText</label>
-                        <input asp-for="SubText" class="form-control" placeholder="name">
+                        <textarea id="SubText" asp-for="SubText" class="form-control" placeholder="name"></textarea>
                         <span asp-validation-for="SubText"></span>
                     </div>
                     <div class="form-group">
                         <label>Content</label>
-                        <input asp-for="Content" class="form-control" placeholder="name">
-                        <span asp-validation-for="Content"></span>
-                    </div>
-                    <div class="form-group">
-                        <label>Content</label>
-                        <input asp-for="Content" class="form-control" placeholder="name">
+                        <textarea id="Content" asp-for="Content" class="form-control" placeholder="name"></textarea>
                         <span asp-validation-for="Content"></span>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <input asp-for="Description" class="form-control">
+                        <textarea id="Description" asp-for="Description" class="form-control"></textarea>
                         <span asp-validation-for="Description"></span>
                     </div>
                     <div class="form-group">
@@ -42,3 +37,15 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+
+<script>
+    CKEDITOR.replace('SubText');
+    CKEDITOR.replace('Content');
+    CKEDITOR.replace('Description');
+    $('form').submit(function () {
+        for (var i in CKEDITOR.instances) {
+            CKEDITOR.instances[i].updateElement();
+        }
+    })
+</script>

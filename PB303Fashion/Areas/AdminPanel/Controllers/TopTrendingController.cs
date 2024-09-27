@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PB303Fashion.DataAccessLayer;
 using PB303Fashion.DataAccessLayer.Entities;
@@ -77,7 +78,7 @@ public class TopTrendingController : AdminController
         {
             return View();
         }
-
+        if(topTrending.ImageFile==null)return View();
         if (!topTrending.ImageFile.IsImage())
         {
             ModelState.AddModelError("ImageFile", "Sekil secmelisiz");
@@ -115,7 +116,7 @@ public class TopTrendingController : AdminController
         var existingTt = await _dbContext.TopTrendings.FindAsync(topTrending.Id);
 
         if (existingTt == null) return NotFound();
-        var path = Path.Combine(Constants.TopTrendingImagePath, existingTt.ImgUrl);
+        var path = Path.Combine(Constants.TopTrendingImagePath, existingTt!.ImgUrl);
         if (System.IO.File.Exists(path)) System.IO.File.Delete(path);
         _dbContext.TopTrendings.Remove(existingTt);
 
@@ -123,4 +124,5 @@ public class TopTrendingController : AdminController
 
         return RedirectToAction(nameof(Index));
     }
+    
 }

@@ -5,6 +5,8 @@ using PB303Fashion.DataAccessLayer;
 using PB303Fashion.Models;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
+using PB303Fashion.DataAccessLayer.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace PB303Fashion
 {
@@ -22,7 +24,17 @@ namespace PB303Fashion
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(10);
             });
+            builder.Services.AddIdentity<AppUser,IdentityRole<int>>(options =>
+            {
+                options.Password.RequiredLength = 3;
+                options.Password.RequireUppercase=false;
+                options.Password.RequireLowercase=false;
+                options.Password.RequireNonAlphanumeric=false;
+                options.Lockout.MaxFailedAccessAttempts = 4;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+                options.User.RequireUniqueEmail=true;
 
+            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
             Constants.TopTrendingImagePath = Path.Combine(builder.Environment.WebRootPath, "assets", "images", "fashion" , "home-banner");
 
             var app = builder.Build();
@@ -32,7 +44,7 @@ namespace PB303Fashion
             app.UseSession();
           
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
