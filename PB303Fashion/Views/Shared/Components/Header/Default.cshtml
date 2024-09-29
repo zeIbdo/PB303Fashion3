@@ -659,7 +659,14 @@
                                         <ul class="user-box-name">
                                             <li class="product-box-contain">
                                                 <i></i>
-                                                <a asp-controller="account" asp-action="Login">Log In</a>
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <a href="#">@User.Identity.Name</a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-controller="account" asp-action="login">Login</a>
+                                                }
                                             </li>
 
                                             <li class="product-box-contain">
@@ -667,7 +674,7 @@
                                             </li>
 
                                             <li class="product-box-contain">
-                                                <a href="forgot.html">Log Out</a>
+                                                <a asp-controller="account" asp-action="logout">Log Out</a>
                                             </li>
                                         </ul>
                                     </div>

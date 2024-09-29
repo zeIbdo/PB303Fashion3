@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using NuGet.ContentModel;
 using PB303Fashion.DataAccessLayer;
 using PB303Fashion.Models;
@@ -38,13 +40,23 @@ namespace PB303Fashion
             Constants.TopTrendingImagePath = Path.Combine(builder.Environment.WebRootPath, "assets", "images", "fashion" , "home-banner");
 
             var app = builder.Build();
-
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            })
+                .AddCookie()
+                .AddGoogle(googleOptions =>{
+                googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSession();
           
             app.UseRouting();
             app.UseAuthentication();
+                
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
